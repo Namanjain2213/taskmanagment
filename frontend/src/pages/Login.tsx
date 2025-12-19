@@ -17,7 +17,7 @@ export const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      // Error is handled by toast in useAuth
+      console.error('Login failed:', err);
     } finally {
       setIsLoading(false);
     }
