@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { Response } from 'express';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
-const JWT_EXPIRE = process.env.JWT_EXPIRE || '7d';
 
 export interface JwtPayload {
   userId: string;
@@ -14,9 +13,11 @@ export interface JwtPayload {
  * @returns Signed JWT token
  */
 export const generateToken = (userId: string): string => {
-  return jwt.sign({ userId }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRE
-  });
+  return (jwt.sign as any)(
+    { userId }, 
+    JWT_SECRET, 
+    { expiresIn: process.env.JWT_EXPIRE || '7d' }
+  );
 };
 
 /**
@@ -26,7 +27,7 @@ export const generateToken = (userId: string): string => {
  */
 export const verifyToken = (token: string): JwtPayload | null => {
   try {
-    return jwt.verify(token, JWT_SECRET) as JwtPayload;
+    return (jwt.verify as any)(token, JWT_SECRET) as JwtPayload;
   } catch (error) {
     return null;
   }
